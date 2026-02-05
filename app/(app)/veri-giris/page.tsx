@@ -88,18 +88,50 @@ export default function VeriGirisPage() {
     const userId = userRes.user?.id;
     if (!userId) return setMsg("❌ Kullanıcı bulunamadı (tekrar giriş yap)");
 
-    const { error } = await supabase.from("stock_transactions").insert({
-      user_id: userId,
-      yarn_type_id: yarnTypeId,
-      color_id: colorId,
-      kg: kgNum,
-      bags: bagsNum,
-      type,
-      contractor_id: canPickContractor ? contractorId : null,
-      note: note.trim() || null,
-    });
+    // ✅ İSTEDİĞİN DEĞİŞİKLİK:
+    // FASONCUDAN_CIKIS = fasoncudan düş + depoya ekle (aynı miktar)
+    if (type === "FASONCUDAN_CIKIS") {
+      const { error } = await supabase.from("stock_transactions").insert([
+        // 1) fasoncudan düş
+        {
+          user_id: userId,
+          yarn_type_id: yarnTypeId,
+          color_id: colorId,
+          kg: kgNum,
+          bags: bagsNum,
+          type: "FASONCUDAN_CIKIS",
+          contractor_id: contractorId,
+          note: note.trim() || null,
+        },
+        // 2) depoya ekle
+        {
+          user_id: userId,
+          yarn_type_id: yarnTypeId,
+          color_id: colorId,
+          kg: kgNum,
+          bags: bagsNum,
+          type: "DEPoya_GIRIS",
+          contractor_id: null,
+          note: `Fasoncudan dönüş${note.trim() ? " - " + note.trim() : ""}`,
+        },
+      ]);
 
-    if (error) return setMsg("❌ " + error.message);
+      if (error) return setMsg("❌ " + error.message);
+    } else {
+      // diğer işlemler aynı
+      const { error } = await supabase.from("stock_transactions").insert({
+        user_id: userId,
+        yarn_type_id: yarnTypeId,
+        color_id: colorId,
+        kg: kgNum,
+        bags: bagsNum,
+        type,
+        contractor_id: canPickContractor ? contractorId : null,
+        note: note.trim() || null,
+      });
+
+      if (error) return setMsg("❌ " + error.message);
+    }
 
     setMsg("✅ Kayıt eklendi");
     setKg("0");
