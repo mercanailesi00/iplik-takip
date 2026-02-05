@@ -36,9 +36,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sol Menü */}
-      <aside className="w-64 border-r p-4">
+    <div className="min-h-screen lg:flex">
+      {/* ✅ MOBİL ÜST BAR (sadece mobilde görünür) */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b p-4">
+        <div className="font-bold text-lg">İplik Takip</div>
+        <div className="text-xs text-gray-600">{email}</div>
+      </div>
+
+      {/* ✅ Sol Menü (mobilde gizli, desktopta aynı) */}
+      <aside className="hidden lg:block w-64 border-r p-4">
         <div className="font-bold text-lg mb-2">İplik Takip</div>
         <div className="text-sm text-gray-600 mb-6">{email}</div>
 
@@ -71,8 +77,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </button>
       </aside>
 
-      {/* İçerik */}
-      <section className="flex-1">{children}</section>
+      {/* ✅ İçerik (mobilde üst bardan dolayı padding-top ekledik) */}
+      <section className="flex-1 pt-20 lg:pt-0">{children}</section>
     </div>
   );
 }
