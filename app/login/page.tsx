@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
@@ -17,14 +17,14 @@ export default function LoginPage() {
     setMsg("");
 
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: `${username}@local.app`,
       password,
     });
 
     setLoading(false);
 
     if (error) {
-      setMsg("❌ " + error.message);
+      setMsg("❌ Kullanıcı adı veya şifre hatalı");
       return;
     }
 
@@ -43,12 +43,12 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-lg mb-2">Email</label>
+            <label className="block text-lg mb-2">Kullanıcı Adı</label>
             <input
               className="w-full border rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-black"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="email"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="örn: noyan"
             />
           </div>
 
