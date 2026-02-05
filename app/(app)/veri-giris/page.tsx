@@ -238,7 +238,7 @@ export default function VeriGirisPage() {
                 type === "FASONCUDAN_CIKIS" ? "bg-black text-white" : "bg-white"
               }`}
             >
-              Fasoncudan Çıkış
+              Fasoncudan Giriş
             </button>
           </div>
         </div>
