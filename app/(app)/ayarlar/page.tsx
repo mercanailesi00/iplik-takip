@@ -58,30 +58,30 @@ export default function AyarlarPage() {
   const [showInactive, setShowInactive] = useState(false);
   const [msg, setMsg] = useState("");
 
+  const loadTable = async (table: "yarn_types" | "colors" | "contractors") => {
+    // ✅ varsayılan: sadece aktifler
+    let q = supabase.from(table).select("id,name,is_active").order("name");
+    if (!showInactive) q = q.eq("is_active", true);
+    const res = await q;
+    return (res.data as Item[]) || [];
+  };
+
   const load = async () => {
     setMsg("");
 
-    const yt = await supabase
-      .from("yarn_types")
-      .select("id,name,is_active")
-      .order("name");
-    const c = await supabase
-      .from("colors")
-      .select("id,name,is_active")
-      .order("name");
-    const f = await supabase
-      .from("contractors")
-      .select("id,name,is_active")
-      .order("name");
+    const yt = await loadTable("yarn_types");
+    const c = await loadTable("colors");
+    const f = await loadTable("contractors");
 
-    setYarnTypes((yt.data as Item[]) || []);
-    setColors((c.data as Item[]) || []);
-    setContractors((f.data as Item[]) || []);
+    setYarnTypes(yt);
+    setColors(c);
+    setContractors(f);
   };
 
   useEffect(() => {
     load();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showInactive]);
 
   const addRow = async (
     table: "yarn_types" | "colors" | "contractors",
